@@ -1,4 +1,4 @@
-module sblogger
+module github.com/sujit-baniya/sblogger
 
 go 1.15
 
