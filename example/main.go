@@ -3,7 +3,7 @@ package main
 import (
 	"fmt"
 	"github.com/gofiber/fiber/v2"
-	"github.com/phuslu/log"
+	"github.com/sujit-baniya/log"
 	"github.com/sujit-baniya/sblogger"
 	"os"
 	"path/filepath"
@@ -31,9 +31,9 @@ func main() {
 		TimeField:  "timestamp",
 		TimeFormat: "2006-01-02 15:04:05",
 		Writer: &log.MultiWriter{
-			InfoWriter:    &log.FileWriter{Filename: "storage/logs/INFO.log", EnsureFolder: true},
-			WarnWriter:    &log.FileWriter{Filename: "storage/logs/WARN.log", EnsureFolder: true},
-			ErrorWriter:   &log.FileWriter{Filename: "storage/logs/ERROR.log", EnsureFolder: true},
+			InfoWriter:    &log.FileWriter{Filename: "storage/logs/INFO.log", EnsureFolder: true, TimeFormat: "2006-01-02"},
+			WarnWriter:    &log.FileWriter{Filename: "storage/logs/WARN.log", EnsureFolder: true, TimeFormat: "2006-01-02"},
+			ErrorWriter:   &log.FileWriter{Filename: "storage/logs/ERROR.log", EnsureFolder: true, TimeFormat: "2006-01-02"},
 			ConsoleWriter: &log.IOWriter{os.Stderr},
 			ConsoleLevel:  log.InfoLevel,
 		},

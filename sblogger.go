@@ -3,7 +3,7 @@ package sblogger
 import (
 	"fmt"
 	"github.com/gofiber/fiber/v2"
-	"github.com/phuslu/log"
+	"github.com/sujit-baniya/log"
 	"github.com/sujit-baniya/xid"
 	"time"
 )
