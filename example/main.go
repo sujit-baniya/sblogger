@@ -4,9 +4,9 @@ import (
 	"fmt"
 	"github.com/gofiber/fiber/v2"
 	"github.com/phuslu/log"
+	"github.com/sujit-baniya/sblogger"
 	"os"
 	"path/filepath"
-	"sblogger"
 	"time"
 )
 
@@ -30,14 +30,13 @@ func main() {
 	log.DefaultLogger = log.Logger{
 		TimeField:  "timestamp",
 		TimeFormat: "2006-01-02 15:04:05",
-	}
-
-	log.DefaultLogger.Writer = &log.MultiWriter{
-		InfoWriter:    &log.IOWriter{logFile("INFO.log")},
-		WarnWriter:    &log.IOWriter{logFile("WARN.log")},
-		ErrorWriter:    &log.IOWriter{logFile("ERROR.log")},
-		ConsoleWriter: &log.IOWriter{os.Stderr},
-		ConsoleLevel:  log.InfoLevel,
+		Writer: &log.MultiWriter{
+			InfoWriter:    &log.FileWriter{Filename: "storage/logs/INFO.log", EnsureFolder: true},
+			WarnWriter:    &log.FileWriter{Filename: "storage/logs/WARN.log", EnsureFolder: true},
+			ErrorWriter:   &log.FileWriter{Filename: "storage/logs/ERROR.log", EnsureFolder: true},
+			ConsoleWriter: &log.IOWriter{os.Stderr},
+			ConsoleLevel:  log.InfoLevel,
+		},
 	}
 	app := fiber.New()
 	app.Use(sblogger.New(sblogger.Config{

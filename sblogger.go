@@ -1,6 +1,7 @@
 package sblogger
 
 import (
+	"fmt"
 	"github.com/gofiber/fiber/v2"
 	"github.com/phuslu/log"
 	"github.com/sujit-baniya/xid"
@@ -8,7 +9,7 @@ import (
 )
 
 type Config struct {
-	Logger *log.Logger
+	Logger    *log.Logger
 	LogWriter log.Writer
 }
 
@@ -30,32 +31,31 @@ func New(config Config) func(*fiber.Ctx) error {
 			rid = xid.New().String()
 			c.Set(fiber.HeaderXRequestID, rid)
 		}
-
-		fields := map[string]interface{} {
-			"request_id":       rid,
-			"remote_ip": c.IP(),
-			"method":   c.Method(),
-			"host":     c.Hostname(),
-			"path":     c.Path(),
-			"protocol": c.Protocol(),
-			"status": c.Response().StatusCode(),
-			"latency" : time.Since(start).Seconds(),
-			"ua": c.Get(fiber.HeaderUserAgent),
-		}
+		ctx := log.NewContext(nil).
+			Str("request_id", rid).
+			Str("remote_ip", c.IP()).
+			Str("method", c.Method()).
+			Str("host", c.Hostname()).
+			Str("path", c.Path()).
+			Str("protocol", c.Protocol()).
+			Int("status", c.Response().StatusCode()).
+			Str("latency", fmt.Sprintf("%s", time.Since(start))).
+			Str("ua", c.Get(fiber.HeaderUserAgent)).
+			Value()
 
 		switch {
 		case c.Response().StatusCode() >= 500:
-			config.Logger.Error().Fields(fields).Msg("server error")
+			config.Logger.Error().Context(ctx).Msg("server error")
 		case c.Response().StatusCode() >= 400:
-			config.Logger.Error().Fields(fields).Msg("client error")
+			config.Logger.Error().Context(ctx).Msg("client error")
 		case c.Response().StatusCode() >= 300:
-			config.Logger.Warn().Fields(fields).Msg("redirect")
+			config.Logger.Warn().Context(ctx).Msg("redirect")
 		case c.Response().StatusCode() >= 200:
-			config.Logger.Info().Fields(fields).Msg("success")
+			config.Logger.Info().Context(ctx).Msg("success")
 		case c.Response().StatusCode() >= 100:
-			config.Logger.Info().Fields(fields).Msg("informative")
+			config.Logger.Info().Context(ctx).Msg("informative")
 		default:
-			config.Logger.Warn().Fields(fields).Msg("unknown status")
+			config.Logger.Warn().Context(ctx).Msg("unknown status")
 		}
 		return c.Next()
 	}
