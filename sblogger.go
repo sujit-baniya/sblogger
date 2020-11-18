@@ -14,9 +14,10 @@ type Config struct {
 }
 
 //Middleware requestid + logger + recover for request traceability
-func New(config Config) func(*fiber.Ctx) error {
+func New(config Config) fiber.Handler {
 	return func(c *fiber.Ctx) error {
 		start := time.Now()
+		nextHandler := c.Next()
 		if config.Logger == nil {
 			config.Logger = &log.Logger{
 				TimeField:  "timestamp",
@@ -31,7 +32,7 @@ func New(config Config) func(*fiber.Ctx) error {
 			rid = xid.New().String()
 			c.Set(fiber.HeaderXRequestID, rid)
 		}
-		ctx := log.NewContext(nil).
+		logging := log.NewContext(nil).
 			Str("request_id", rid).
 			Str("remote_ip", c.IP()).
 			Str("method", c.Method()).
@@ -40,9 +41,12 @@ func New(config Config) func(*fiber.Ctx) error {
 			Str("protocol", c.Protocol()).
 			Int("status", c.Response().StatusCode()).
 			Str("latency", fmt.Sprintf("%s", time.Since(start))).
-			Str("ua", c.Get(fiber.HeaderUserAgent)).
-			Value()
+			Str("ua", c.Get(fiber.HeaderUserAgent))
 
+		if nextHandler != nil {
+			logging.Str("error", nextHandler.Error())
+		}
+		ctx := logging.Value()
 		switch {
 		case c.Response().StatusCode() >= 500:
 			config.Logger.Error().Context(ctx).Msg("server error")
@@ -57,6 +61,6 @@ func New(config Config) func(*fiber.Ctx) error {
 		default:
 			config.Logger.Warn().Context(ctx).Msg("unknown status")
 		}
-		return c.Next()
+		return nextHandler
 	}
 }
