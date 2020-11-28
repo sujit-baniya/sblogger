@@ -18,6 +18,9 @@ func New(config Config) fiber.Handler {
 	return func(c *fiber.Ctx) error {
 		start := time.Now()
 		nextHandler := c.Next()
+		if c.Route().Path == "/" && c.Path() != c.Route().Path {
+			return nextHandler
+		}
 		if config.Logger == nil {
 			config.Logger = &log.Logger{
 				TimeField:  "timestamp",

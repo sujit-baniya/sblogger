@@ -29,6 +29,7 @@ func main() {
 	app.Get("test", func(c *fiber.Ctx) error {
 		return c.JSON("Hello")
 	})
+	app.Static("/", "./public")
 	app.Listen(":8081")
 
 }
