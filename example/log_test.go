@@ -33,7 +33,7 @@ func BenchmarkZeroLog(b *testing.B) {
 
 func BenchmarkPhusLog(b *testing.B) {
 	logger := log.Logger{
-		TimeFormat: log.TimeFormatRFC3339Milli,
+		TimeFormat: log.TimeFormatUnix,
 		Writer:     log.IOWriter{ioutil.Discard},
 	}
 	for i := 0; i < b.N; i++ {
