@@ -2,6 +2,7 @@ package main
 
 import (
 	"github.com/gofiber/fiber/v2"
+	"github.com/pkg/errors"
 	"github.com/sujit-baniya/log"
 	"github.com/sujit-baniya/sblogger"
 	"os"
@@ -27,9 +28,11 @@ func main() {
 	}),
 	)
 	app.Get("test", func(c *fiber.Ctx) error {
+		err := errors.WithStack(errors.New("test"))
+		log.Error().Err(err).Msg("Error")
 		return c.JSON("Hello")
 	})
 	app.Static("/", "./public")
-	app.Listen(":8081")
+	log.Fatal().Err(app.Listen(":8081"))
 
 }
