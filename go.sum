@@ -51,6 +51,8 @@ github.com/sujit-baniya/log v1.0.54 h1:oJvF1dz8UIV8aBw76XAJr08k8c9hkj1Fn1ZDagHiy
 github.com/sujit-baniya/log v1.0.54/go.mod h1:Kwd3geokvMJPp+wLVm+1LtvI85JCpI1GEaWDbnn4YXA=
 github.com/sujit-baniya/log v1.0.59 h1:t5JHmuaC8q7M/g2MGQNXGbTUCESsDbAAuTiu0ZO5hb8=
 github.com/sujit-baniya/log v1.0.59/go.mod h1:qAfpP0my796JYtZR/jLgVFRtYipop+UOyHLJxQLFPz8=
+github.com/sujit-baniya/log v1.0.61 h1:Oo23cFuGOYDQk8bHqklV+URknx8yjlRMMSddd2e1a/Y=
+github.com/sujit-baniya/log v1.0.61/go.mod h1:qAfpP0my796JYtZR/jLgVFRtYipop+UOyHLJxQLFPz8=
 github.com/sujit-baniya/xid v1.2.2 h1:sXLRSXzZ6l3qcBSu9soUrtq9Fzlvq5ODv/45LmvaQHw=
 github.com/sujit-baniya/xid v1.2.2/go.mod h1:ZttvqxL/+7CcQQ/Mv1HjhjiLdKyZ+9lEXCMsqdpBeT4=
 github.com/valyala/bytebufferpool v1.0.0 h1:GqA5TC/0021Y/b9FG4Oi9Mr3q7XYx6KllzawFIhcdPw=
