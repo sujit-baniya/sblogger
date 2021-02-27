@@ -35,9 +35,14 @@ func New(config Config) fiber.Handler {
 			rid = xid.New().String()
 			c.Set(fiber.HeaderXRequestID, rid)
 		}
+		ip := c.IP()
+		curIP := c.Locals("ip")
+		if curIP != nil {
+			ip = curIP.(string)
+		}
 		logging := log.NewContext(nil).
 			Str("request_id", rid).
-			Str("remote_ip", c.IP()).
+			Str("remote_ip", ip).
 			Str("method", c.Method()).
 			Str("host", c.Hostname()).
 			Str("path", c.Path()).
