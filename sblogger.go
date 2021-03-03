@@ -5,18 +5,33 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/sujit-baniya/log"
 	"github.com/sujit-baniya/xid"
+	"strings"
 	"time"
 )
 
 type Config struct {
 	Logger    *log.Logger
 	LogWriter log.Writer
+	RequestID func() string
 }
 
 //Middleware requestid + logger + recover for request traceability
 func New(config Config) fiber.Handler {
 	return func(c *fiber.Ctx) error {
 		start := time.Now()
+		if strings.Contains(c.Path(), "favicon") {
+			return c.Next()
+		}
+		rid := c.Get(fiber.HeaderXRequestID)
+		if config.RequestID == nil {
+			config.RequestID = func() string {
+				return xid.New().String()
+			}
+		}
+		if rid == "" {
+			rid = config.RequestID()
+			c.Set(fiber.HeaderXRequestID, rid)
+		}
 		nextHandler := c.Next()
 		if c.Route().Path == "/" && c.Path() != c.Route().Path {
 			return nextHandler
@@ -29,11 +44,6 @@ func New(config Config) fiber.Handler {
 		}
 		if config.LogWriter != nil {
 			config.Logger.Writer = config.LogWriter
-		}
-		rid := c.Get(fiber.HeaderXRequestID)
-		if rid == "" {
-			rid = xid.New().String()
-			c.Set(fiber.HeaderXRequestID, rid)
 		}
 		ip := c.IP()
 		curIP := c.Locals("ip")
